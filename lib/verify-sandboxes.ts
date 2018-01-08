@@ -5,7 +5,7 @@ import { ErrorReporter, REPORT_TYPE } from '../lib/error-reporter';
 
 // Used to tailor the version of headless chromium ran by puppeteer
 const CHROME_ARGS = [ '--disable-gpu', '--no-sandbox' ];
-const SANDBOXES_PATH = resolvePath(__dirname, '../../../angular-playground/dist/build/src/shared/sandboxes.js');
+const SANDBOXES_PATH = resolvePath(__dirname, '../../../angular-playground/dist/build/src/shared/sandboxes.ts');
 
 export interface ScenarioSummary {
     url: string;
@@ -25,7 +25,6 @@ process.on('unhandledRejection', () => {
 
 export function verifySandboxes(program: any) {
     hostUrl = `http://localhost:${program.port}`;
-    console.log(SANDBOXES_PATH)
     main(program);
 }
 
@@ -33,17 +32,14 @@ export function verifySandboxes(program: any) {
 
 async function main(program: any) {
     const timeoutAttempts = program.timeout;
-    console.log('grabbing puppeteer')
     browser = await puppeteer.launch({
         headless: true,
         handleSIGINT: false,
         args: CHROME_ARGS
     });
-    console.log('created browser')
 
     // TODO:
     const scenarios = getSandboxMetadata(hostUrl, program.randomScenario, SANDBOXES_PATH);
-    console.log(scenarios)
 
     reporter = new ErrorReporter(scenarios, program.reportPath, program.reportType);
     console.log(`Retrieved ${scenarios.length} scenarios.\n`);
@@ -96,24 +92,26 @@ async function openScenarioInNewPage(scenario: ScenarioSummary, timeoutAttempts:
 function getSandboxMetadata(baseUrl: string, selectRandomScenario: boolean, path: string): ScenarioSummary[] {
     const scenarios: ScenarioSummary[] = [];
 
-    loadSandboxMenuItems(path).forEach((scenario: any) => {
-        if (selectRandomScenario) {
-            const randomItemKey = getRandomKey(scenario.scenarioMenuItems.length);
-            scenario.scenarioMenuItems
-                .forEach((item: any) => {
-                    if (item.key === randomItemKey) {
+    loadSandboxMenuItems(path).then(sandboxes => {
+        sandboxes.forEach((scenario: any) => {
+            if (selectRandomScenario) {
+                const randomItemKey = getRandomKey(scenario.scenarioMenuItems.length);
+                scenario.scenarioMenuItems
+                    .forEach((item: any) => {
+                        if (item.key === randomItemKey) {
+                            const url = `${baseUrl}?scenario=${encodeURIComponent(scenario.key)}/${encodeURIComponent(item.description)}`;
+                            scenarios.push({ url, name: scenario.key, description: item.description });
+                        }
+                    });
+            } else {
+                // Grab all scenarios
+                scenario.scenarioMenuItems
+                    .forEach((item: any) => {
                         const url = `${baseUrl}?scenario=${encodeURIComponent(scenario.key)}/${encodeURIComponent(item.description)}`;
                         scenarios.push({ url, name: scenario.key, description: item.description });
-                    }
-                });
-        } else {
-            // Grab all scenarios
-            scenario.scenarioMenuItems
-                .forEach((item: any) => {
-                    const url = `${baseUrl}?scenario=${encodeURIComponent(scenario.key)}/${encodeURIComponent(item.description)}`;
-                    scenarios.push({ url, name: scenario.key, description: item.description });
-                });
-        }
+                    });
+            }
+        });
     });
 
     return scenarios;
@@ -123,16 +121,16 @@ function getSandboxMetadata(baseUrl: string, selectRandomScenario: boolean, path
  * Attempt to load sandboxes.ts and provide menu items
  * @param path - Path to sandboxes.ts
  */
-function loadSandboxMenuItems(path: string): any[] {
+async function loadSandboxMenuItems(path: string): Promise<any[]> {
     try {
-        return require(path).getSandboxMenuItems();
+        // return require(path).getSandboxMenuItems();
+        // const sandbox = await import('../../../angular-playground/dist/build/src/shared/sandboxes')
+        const sandbox = await import(SANDBOXES_PATH);
+        return sandbox.getSandboxMenuItems();
     } catch (err) {
         console.log(chalk.red('Failed to load sandbox menu items.'));
+        console.error(err);
         throw new Error(err);
-    //     console.error('Failed to load sandboxes.ts file.');
-    //     console.error(err);
-    //     console.log('Terminating process.');
-    //     process.exit(1);
     }
 }
 
