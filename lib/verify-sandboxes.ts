@@ -1,10 +1,11 @@
+import * as puppeteer from 'puppeteer';
 import { resolve as resolvePath } from 'path';
 import chalk from 'chalk';
 import { ErrorReporter, REPORT_TYPE } from '../lib/error-reporter';
 
 // Used to tailor the version of headless chromium ran by puppeteer
 const CHROME_ARGS = [ '--disable-gpu', '--no-sandbox' ];
-const SANDBOXES_PATH = resolvePath(__dirname, '../../../node_modules/angular-playground/dist/build/src/shared/sandboxes.js');
+const SANDBOXES_PATH = resolvePath(__dirname, '../../../angular-playground/dist/build/src/shared/sandboxes.js');
 
 export interface ScenarioSummary {
     url: string;
@@ -22,24 +23,27 @@ process.on('unhandledRejection', () => {
     if (browser) browser.close();
 });
 
-export async function verifySandboxes(program: any) {
+export function verifySandboxes(program: any) {
     hostUrl = `http://localhost:${program.port}`;
-    await main(program);
+    console.log(SANDBOXES_PATH)
+    main(program);
 }
 
 /////////////////////////////////
 
 async function main(program: any) {
     const timeoutAttempts = program.timeout;
-    const puppeteer = await import('puppeteer');
+    console.log('grabbing puppeteer')
     browser = await puppeteer.launch({
         headless: true,
         handleSIGINT: false,
         args: CHROME_ARGS
     });
+    console.log('created browser')
 
     // TODO:
     const scenarios = getSandboxMetadata(hostUrl, program.randomScenario, SANDBOXES_PATH);
+    console.log(scenarios)
 
     reporter = new ErrorReporter(scenarios, program.reportPath, program.reportType);
     console.log(`Retrieved ${scenarios.length} scenarios.\n`);
