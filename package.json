@@ -2,7 +2,6 @@
   "name": "check-sandboxes-plugin",
   "version": "1.0.0",
   "description": "Run Chromium against angular-playground to automate error reporting.",
-  "main": "bin/index.js",
   "bin": {
     "check-sandboxes-plugin": "bin/index.js"
   },
@@ -12,7 +11,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "prepublish": "build",
+    "prepublish": "npm run build",
     "check-errors": "node ./bin/index.js --port=4201"
   },
   "repository": {
