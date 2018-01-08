@@ -1,6 +1,6 @@
 {
   "name": "check-sandboxes-plugin",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Run Chromium against angular-playground to automate error reporting.",
   "bin": {
     "check-sandboxes": "./bin/index.js"
