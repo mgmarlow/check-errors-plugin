@@ -2,6 +2,7 @@ import * as puppeteer from 'puppeteer';
 import { resolve as resolvePath } from 'path';
 import chalk from 'chalk';
 import { ErrorReporter, REPORT_TYPE } from '../lib/error-reporter';
+import 'typescript-require';
 
 // Used to tailor the version of headless chromium ran by puppeteer
 const CHROME_ARGS = [ '--disable-gpu', '--no-sandbox' ];

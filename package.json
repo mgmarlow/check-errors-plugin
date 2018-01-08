@@ -31,7 +31,8 @@
     "async": "^2.6.0",
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
-    "puppeteer": "^0.13.0"
+    "puppeteer": "^0.13.0",
+    "typescript-require": "^0.2.9-1"
   },
   "devDependencies": {
     "@types/node": "^9.3.0",
