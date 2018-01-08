@@ -2,6 +2,10 @@
 import * as program from 'commander';
 import { verifySandboxes } from './lib/verify-sandboxes';
 import { REPORT_TYPE } from './lib/error-reporter';
+import { copyFileSync } from 'fs';
+import { resolve as resolvePath } from 'path';
+
+const SANDBOXES_PATH = resolvePath(__dirname, '../../../angular-playground/dist/build/src/shared/sandboxes.js');
 
 program
     .name('check-errors-plugin')
@@ -13,4 +17,5 @@ program
     .option('--report-path', 'File path for report output')
     .parse(process.argv);
 
-verifySandboxes(program);
+copyFileSync(SANDBOXES_PATH, '../sandboxes.js');
+// verifySandboxes(program);

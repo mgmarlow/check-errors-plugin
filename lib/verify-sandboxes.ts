@@ -2,11 +2,11 @@ import * as puppeteer from 'puppeteer';
 import { resolve as resolvePath } from 'path';
 import chalk from 'chalk';
 import { ErrorReporter, REPORT_TYPE } from '../lib/error-reporter';
-import 'typescript-require';
 
 // Used to tailor the version of headless chromium ran by puppeteer
 const CHROME_ARGS = [ '--disable-gpu', '--no-sandbox' ];
-const SANDBOXES_PATH = resolvePath(__dirname, '../../../angular-playground/dist/build/src/shared/sandboxes.ts');
+// const SANDBOXES_PATH = resolvePath(__dirname, '../../../angular-playground/dist/build/src/shared/sandboxes.ts');
+const SANDBOXES_PATH = '../../sandboxes.js';
 
 export interface ScenarioSummary {
     url: string;
@@ -93,26 +93,24 @@ async function openScenarioInNewPage(scenario: ScenarioSummary, timeoutAttempts:
 function getSandboxMetadata(baseUrl: string, selectRandomScenario: boolean, path: string): ScenarioSummary[] {
     const scenarios: ScenarioSummary[] = [];
 
-    loadSandboxMenuItems(path).then(sandboxes => {
-        sandboxes.forEach((scenario: any) => {
-            if (selectRandomScenario) {
-                const randomItemKey = getRandomKey(scenario.scenarioMenuItems.length);
-                scenario.scenarioMenuItems
-                    .forEach((item: any) => {
-                        if (item.key === randomItemKey) {
-                            const url = `${baseUrl}?scenario=${encodeURIComponent(scenario.key)}/${encodeURIComponent(item.description)}`;
-                            scenarios.push({ url, name: scenario.key, description: item.description });
-                        }
-                    });
-            } else {
-                // Grab all scenarios
-                scenario.scenarioMenuItems
-                    .forEach((item: any) => {
+    loadSandboxMenuItems(path).forEach((scenario: any) => {
+        if (selectRandomScenario) {
+            const randomItemKey = getRandomKey(scenario.scenarioMenuItems.length);
+            scenario.scenarioMenuItems
+                .forEach((item: any) => {
+                    if (item.key === randomItemKey) {
                         const url = `${baseUrl}?scenario=${encodeURIComponent(scenario.key)}/${encodeURIComponent(item.description)}`;
                         scenarios.push({ url, name: scenario.key, description: item.description });
-                    });
-            }
-        });
+                    }
+                });
+        } else {
+            // Grab all scenarios
+            scenario.scenarioMenuItems
+                .forEach((item: any) => {
+                    const url = `${baseUrl}?scenario=${encodeURIComponent(scenario.key)}/${encodeURIComponent(item.description)}`;
+                    scenarios.push({ url, name: scenario.key, description: item.description });
+                });
+        }
     });
 
     return scenarios;
@@ -122,13 +120,9 @@ function getSandboxMetadata(baseUrl: string, selectRandomScenario: boolean, path
  * Attempt to load sandboxes.ts and provide menu items
  * @param path - Path to sandboxes.ts
  */
-function loadSandboxMenuItems(path: string): Promise<any[]> {
+function loadSandboxMenuItems(path: string): any[] {
     try {
-        // return require(path).getSandboxMenuItems();
-        // const sandbox = await import('../../../angular-playground/dist/build/src/shared/sandboxes')
-        // const sandbox = await import(SANDBOXES_PATH);
-        const sandbox = require(SANDBOXES_PATH);
-        return sandbox.getSandboxMenuItems();
+        return require(SANDBOXES_PATH).getSandboxMenuItems();
     } catch (err) {
         console.log(chalk.red('Failed to load sandbox menu items.'));
         console.error(err);

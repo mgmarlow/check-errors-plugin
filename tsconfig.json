@@ -2,7 +2,7 @@
     "compilerOptions": {
       "baseUrl": "",
       "declaration": false,
-      "lib": ["es6", "dom"],
+      "lib": ["es6", "dom", "esnext"],
       "module": "commonjs",
       "moduleResolution": "node",
       "outDir": "./bin",
