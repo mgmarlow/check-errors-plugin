@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import * as program from 'commander';
 import { verifySandboxes } from './lib/verify-sandboxes';
 import { REPORT_TYPE } from './lib/error-reporter';
