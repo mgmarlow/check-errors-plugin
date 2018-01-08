@@ -121,11 +121,12 @@ function getSandboxMetadata(baseUrl: string, selectRandomScenario: boolean, path
  * Attempt to load sandboxes.ts and provide menu items
  * @param path - Path to sandboxes.ts
  */
-async function loadSandboxMenuItems(path: string): Promise<any[]> {
+function loadSandboxMenuItems(path: string): Promise<any[]> {
     try {
         // return require(path).getSandboxMenuItems();
         // const sandbox = await import('../../../angular-playground/dist/build/src/shared/sandboxes')
-        const sandbox = await import(SANDBOXES_PATH);
+        // const sandbox = await import(SANDBOXES_PATH);
+        const sandbox = require(SANDBOXES_PATH);
         return sandbox.getSandboxMenuItems();
     } catch (err) {
         console.log(chalk.red('Failed to load sandbox menu items.'));
