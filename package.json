@@ -3,7 +3,7 @@
   "version": "1.0.3",
   "description": "Run Chromium against angular-playground to automate error reporting.",
   "bin": {
-    "check-sandboxes-plugin": "./bin/index.js"
+    "check-sandboxes": "./bin/index.js"
   },
   "files": [
     "bin"
