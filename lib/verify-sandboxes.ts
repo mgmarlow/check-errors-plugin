@@ -5,8 +5,6 @@ import { ErrorReporter, REPORT_TYPE } from '../lib/error-reporter';
 
 // Used to tailor the version of headless chromium ran by puppeteer
 const CHROME_ARGS = [ '--disable-gpu', '--no-sandbox' ];
-// const SANDBOXES_PATH = resolvePath(__dirname, '../../../angular-playground/dist/build/src/shared/sandboxes.ts');
-const SANDBOXES_PATH = '../../sandboxes.js';
 
 export interface ScenarioSummary {
     url: string;
@@ -40,7 +38,7 @@ async function main(program: any) {
     });
 
     // TODO:
-    const scenarios = getSandboxMetadata(hostUrl, program.randomScenario, SANDBOXES_PATH);
+    const scenarios = getSandboxMetadata(hostUrl, program.randomScenario);
 
     reporter = new ErrorReporter(scenarios, program.reportPath, program.reportType);
     console.log(`Retrieved ${scenarios.length} scenarios.\n`);
@@ -88,12 +86,11 @@ async function openScenarioInNewPage(scenario: ScenarioSummary, timeoutAttempts:
  * Retrieves Sandbox scenario URLs, descriptions, and names
  * @param baseUrl - Base URL of scenario path e.g. http://localhost:4201
  * @param selectRandomScenario - Whether or not to select one random scenario of all availalble scenarios for a component
- * @param path - Path to sandboxes.ts
  */
-function getSandboxMetadata(baseUrl: string, selectRandomScenario: boolean, path: string): ScenarioSummary[] {
+function getSandboxMetadata(baseUrl: string, selectRandomScenario: boolean): ScenarioSummary[] {
     const scenarios: ScenarioSummary[] = [];
 
-    loadSandboxMenuItems(path).forEach((scenario: any) => {
+    loadSandboxMenuItems().forEach((scenario: any) => {
         if (selectRandomScenario) {
             const randomItemKey = getRandomKey(scenario.scenarioMenuItems.length);
             scenario.scenarioMenuItems
@@ -118,15 +115,14 @@ function getSandboxMetadata(baseUrl: string, selectRandomScenario: boolean, path
 
 /**
  * Attempt to load sandboxes.ts and provide menu items
- * @param path - Path to sandboxes.ts
  */
-function loadSandboxMenuItems(path: string): any[] {
+function loadSandboxMenuItems(): any[] {
     try {
-        return require(SANDBOXES_PATH).getSandboxMenuItems();
+        return require('../../sandboxes.js').getSandboxMenuItems();
     } catch (err) {
         console.log(chalk.red('Failed to load sandbox menu items.'));
         console.error(err);
-        throw new Error(err);
+        throw err;
     }
 }
 

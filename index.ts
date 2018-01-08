@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import * as program from 'commander';
-import { verifySandboxes } from './lib/verify-sandboxes';
-import { REPORT_TYPE } from './lib/error-reporter';
 import { copyFileSync } from 'fs';
 import { resolve as resolvePath } from 'path';
+import { verifySandboxes } from './lib/verify-sandboxes';
+import { REPORT_TYPE } from './lib/error-reporter';
+import { removeDynamicImports } from './lib/remove-dynamic-imports';
 
-const SANDBOXES_PATH = resolvePath(__dirname, '../../../angular-playground/dist/build/src/shared/sandboxes.js');
+const SANDBOXES_PATH = resolvePath(__dirname, '../../angular-playground/dist/build/src/shared/sandboxes.js');
 
 program
     .name('check-errors-plugin')
@@ -17,5 +18,6 @@ program
     .option('--report-path', 'File path for report output')
     .parse(process.argv);
 
-copyFileSync(SANDBOXES_PATH, '../sandboxes.js');
-// verifySandboxes(program);
+copyFileSync(SANDBOXES_PATH, './node_modules/check-sandboxes-plugin/sandboxes.js');
+removeDynamicImports('./node_modules/check-sandboxes-plugin/sandboxes.js');
+verifySandboxes(program);

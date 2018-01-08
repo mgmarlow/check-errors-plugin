@@ -6,7 +6,8 @@
     "check-sandboxes": "./bin/index.js"
   },
   "files": [
-    "bin"
+    "bin",
+    "sandboxes.js"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
