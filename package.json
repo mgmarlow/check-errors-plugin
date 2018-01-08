@@ -1,0 +1,38 @@
+{
+  "name": "check-sandboxes-plugin",
+  "version": "1.0.0",
+  "description": "Run Chromium against angular-playground to automate error reporting.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "prepublish": "build",
+    "check-errors": "node ./dist/bin/index.js --port=4201"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mgmarlow/check-errors-plugin.git"
+  },
+  "keywords": [
+    "angular-playground"
+  ],
+  "author": "mgmarlow",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mgmarlow/check-errors-plugin/issues"
+  },
+  "homepage": "https://github.com/mgmarlow/check-errors-plugin#readme",
+  "dependencies": {
+    "async": "^2.6.0",
+    "chalk": "^2.3.0",
+    "commander": "^2.12.2",
+    "puppeteer": "^0.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^9.3.0",
+    "typescript": "^2.6.2"
+  }
+}
